@@ -173,6 +173,7 @@ MonoBehaviour:
   _health: 10
   _smoothTime: 0.5
   _smoothRotationTime: 15
+  _exp: {fileID: 4273454036972977349, guid: e8564a7388b131847a3c9b13c4f308b6, type: 3}
   FinalMoveSpeed: 0
   FinalMoveLength: 0
   FinalMainShotDelay: 0
