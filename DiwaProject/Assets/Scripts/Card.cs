@@ -4,17 +4,11 @@ using UnityEngine;
 
 public class Card : MonoBehaviour
 {
+    public bool flip = false;
 
-    void Update()
+    public void FlipCard()
     {
-        if (Input.GetMouseButtonDown(0) && Input.mousePosition.Equals(gameObject.transform.position))
-        {
-            transform.GetChild(0).gameObject.SetActive(true);
-            ++GameManager.Instance.CardsCount;
-        }
-
-        if (transform.GetChild(0).gameObject.activeSelf && GameManager.Instance.CardsCount == 0)
-            transform.GetChild(0).gameObject.SetActive(false);
-
+        flip = !flip;
     }
+    
 }
