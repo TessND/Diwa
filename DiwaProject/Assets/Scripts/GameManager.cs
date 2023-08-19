@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] int _matchCode;
     [SerializeField] Sprite _cardBack;
     [SerializeField] List<Sprite> _cardFront;
-    [SerializeField] private List<GameObject> _cards;
+    public List<GameObject> Cards;
 
 
     public static GameManager Instance;
@@ -33,27 +34,6 @@ public class GameManager : MonoBehaviour
     {
         CardsCount = 0;
         Match = false;
-
-        foreach (var card in _cards)
-        {
-            card.GetComponent<CardHolder>().CardBack = _cardBack;
-        }
-
-        CardsManagment();
-    }
-
-    private void Update()
-    {
-        if (CardsCount == 2 && Time.time > SecondClick + 1)
-        {
-            foreach (var card in _cards)
-            {
-                card.GetComponent<CardHolder>().SpriteCard.sprite = _cardBack;
-                card.GetComponent<CardHolder>().SpriteCard.raycastTarget = true;
-                NullCardsCount();
-            }
-
-        }
     }
 
     public void NullCardsCount()
@@ -61,16 +41,21 @@ public class GameManager : MonoBehaviour
         CardsCount = 0;
     }
 
-    private void CardsManagment()
+    public void CardsManagment()
     {
+        foreach (var card in Cards)
+        {
+            card.GetComponent<CardHolder>().CardBack = _cardBack;
+        }
+
         _matchCode = 0;
         List<GameObject> cards = new();
         List<Sprite> cardsFront = new();
 
-        cards.AddRange(_cards);
+        cards.AddRange(Cards);
         cardsFront.AddRange(_cardFront);
 
-        for (int i = 0; i != _cards.Count / 2; ++i)
+        for (int i = 0; i != Cards.Count / 2; ++i)
         {
             int indexF = Random.Range(0, cardsFront.Count - 1);
 
@@ -92,5 +77,67 @@ public class GameManager : MonoBehaviour
             cardsFront.RemoveAt(indexF);
             ++_matchCode;
         }
+    }
+
+    int _currentScene = 0;
+
+    public void GameSceneChange()
+    {
+        if (_currentScene == 0)
+        {
+            SceneManager.LoadScene(1);
+            _currentScene = 1;
+        }
+        else
+        {
+            SceneManager.LoadScene(0);
+            _currentScene = 0;
+        }
+    }
+
+    public void Gallery()
+    {
+
+    }
+
+    //----------------------------------------------------
+
+    CardHolder _firstCard;
+    CardHolder _secondCard;
+    Sprite _cardsSprite;
+
+    public bool CanReveal
+    {
+        get { return _secondCard == null; }
+    }
+
+    public void CardRevealed(CardHolder card)
+    {
+        if (_firstCard == null)
+            _firstCard = card;
+        else
+        {
+            _secondCard = card;
+            StartCoroutine(CheckMatch());
+        }
+    }
+
+    private IEnumerator CheckMatch()
+    {
+        if (_firstCard.MatchCode == _secondCard.MatchCode)
+        {
+            _cardsSprite = _firstCard.CardFront;
+        }
+        else
+        {
+            yield return new WaitForSeconds(0.5f);
+
+            _firstCard.Unreveal();
+            _secondCard.Unreveal();
+
+        }
+
+        _firstCard = null;
+        _secondCard = null;
     }
 }

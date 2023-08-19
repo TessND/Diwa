@@ -16,16 +16,28 @@ public class CardHolder : MonoBehaviour
     private void Start()
     {
         SpriteCard = GetComponent<Image>();
+        GameManager.Instance.Cards.Add(this.gameObject);
+        if (GameManager.Instance.Cards.Count == 10)
+            GameManager.Instance.CardsManagment();
+    }
+
+    public void Unreveal()
+    {
+        SpriteCard.sprite = CardBack;
+        SpriteCard.raycastTarget = true;
     }
 
     public void CardHolderFlip()
     {
-        if (SpriteCard.sprite != CardFront && GameManager.Instance.CardsCount < 2)
+        if (SpriteCard.sprite != CardFront && GameManager.Instance.CanReveal)
         {
             ++GameManager.Instance.CardsCount;
             GameManager.Instance.SecondClick = Time.time;
+
             SpriteCard.sprite = CardFront;
             SpriteCard.raycastTarget = false;
+
+            GameManager.Instance.CardRevealed(this);
         }
     }
 }
