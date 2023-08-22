@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class MainMenu : MonoBehaviour
+public class Buttons : MonoBehaviour
 {
     [SerializeField] GameObject _menu;
     [SerializeField] GameObject _gallery;
@@ -11,8 +13,11 @@ public class MainMenu : MonoBehaviour
 
     private void Start()
     {
-        _menu.SetActive(true);
-        _gallery.SetActive(false);
+        if (GameManager.Instance.CurrentScene == 0)
+        {
+            _menu.SetActive(true);
+            _gallery.SetActive(false);
+        }
     }
 
     public void ChangeCanvas()
@@ -29,5 +34,15 @@ public class MainMenu : MonoBehaviour
             _gallery.SetActive(false);
             _isMenu = true;
         }
+    }
+
+    public void ChangeScene()
+    {
+        GameManager.Instance.StartCoroutine("GameSceneChange");
+    }
+
+    public void StartGame()
+    {
+        GameManager.Instance.ShuffleCards();
     }
 }

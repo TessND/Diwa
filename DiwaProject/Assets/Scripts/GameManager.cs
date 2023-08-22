@@ -6,8 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] public int CardsCount;
-    [SerializeField] public bool Match;
+    public int CardsCount;
+    public int Tries;
     public float SecondClick;
 
     [SerializeField] int _matchCode;
@@ -25,15 +25,21 @@ public class GameManager : MonoBehaviour
             transform.parent = null;
             DontDestroyOnLoad(gameObject);
             Instance = this;
+
+            CurrentScene = SceneManager.GetActiveScene().buildIndex;
+
+            if (CurrentScene != 0)
+            {
+                SceneManager.LoadScene(0);
+                CurrentScene = 0;
+            }
         }
         else Destroy(gameObject);
-
     }
 
     void Start()
     {
         CardsCount = 0;
-        Match = false;
     }
 
     public void NullCardsCount()
@@ -41,7 +47,7 @@ public class GameManager : MonoBehaviour
         CardsCount = 0;
     }
 
-    public void CardsManagment()
+    public void ShuffleCards()
     {
         foreach (var card in Cards)
         {
@@ -79,20 +85,39 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    int _currentScene = 0;
+    public int CurrentScene;
 
-    public void GameSceneChange()
+    public IEnumerator GameSceneChange()
     {
-        if (_currentScene == 0)
+        if (CurrentScene == 0)
         {
             SceneManager.LoadScene(1);
-            _currentScene = 1;
+            CurrentScene = 1;
+
+            yield return new WaitForSeconds(0.1f);
         }
         else
         {
             SceneManager.LoadScene(0);
-            _currentScene = 0;
+            CurrentScene = 0;
+
+            Cards.RemoveRange(0,10);
+
+            yield return new WaitForSeconds(0.1f);
         }
+
+        if (SceneManager.GetActiveScene().buildIndex == 1)
+            CardsManagment();
+        
+    }
+
+    private void CardsManagment()
+    {
+        GameObject cardsCanvas = GameObject.FindGameObjectWithTag("Card");
+
+        for (int i = 0; i != cardsCanvas.transform.childCount; ++i)
+            cardsCanvas.transform.GetChild(i).GetComponent<CardHolder>().CardsStart();
+        
     }
 
     public void Gallery()
@@ -132,6 +157,7 @@ public class GameManager : MonoBehaviour
         {
             yield return new WaitForSeconds(0.5f);
 
+            --Tries;
             _firstCard.Unreveal();
             _secondCard.Unreveal();
 

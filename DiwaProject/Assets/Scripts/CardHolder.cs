@@ -16,9 +16,13 @@ public class CardHolder : MonoBehaviour
     private void Start()
     {
         SpriteCard = GetComponent<Image>();
+    }
+
+    public void CardsStart()
+    {
         GameManager.Instance.Cards.Add(this.gameObject);
         if (GameManager.Instance.Cards.Count == 10)
-            GameManager.Instance.CardsManagment();
+            GameManager.Instance.ShuffleCards();
     }
 
     public void Unreveal()
