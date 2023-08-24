@@ -21,6 +21,8 @@ public class CardHolder : MonoBehaviour
     public void CardsStart()
     {
         GameManager.Instance.Cards.Add(this.gameObject);
+        SpriteCard.raycastTarget = false;
+
         if (GameManager.Instance.Cards.Count == 10)
             GameManager.Instance.ShuffleCards();
     }
@@ -35,9 +37,6 @@ public class CardHolder : MonoBehaviour
     {
         if (SpriteCard.sprite != CardFront && GameManager.Instance.CanReveal)
         {
-            ++GameManager.Instance.CardsCount;
-            GameManager.Instance.SecondClick = Time.time;
-
             SpriteCard.sprite = CardFront;
             SpriteCard.raycastTarget = false;
 

@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public int CardsCount;
+    public int MatchCount;
     public int Tries;
     public float SecondClick;
 
@@ -37,22 +37,10 @@ public class GameManager : MonoBehaviour
         else Destroy(gameObject);
     }
 
-    void Start()
-    {
-        CardsCount = 0;
-    }
-
-    public void NullCardsCount()
-    {
-        CardsCount = 0;
-    }
-
     public void ShuffleCards()
     {
         foreach (var card in Cards)
-        {
             card.GetComponent<CardHolder>().CardBack = _cardBack;
-        }
 
         _matchCode = 0;
         List<GameObject> cards = new();
@@ -63,24 +51,25 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i != Cards.Count / 2; ++i)
         {
-            int indexF = Random.Range(0, cardsFront.Count - 1);
-
+            int indexCardsFront = Random.Range(0, cardsFront.Count - 1); //Picture
+            
             for (int j = 0; j != 2; ++j)
             {
-                int indexC = Random.Range(0, cards.Count - 1);
+                int indexCards = Random.Range(0, cards.Count - 1); //Card itself
 
-                CardHolder cardsCode = cards[indexC].GetComponent<CardHolder>();
+                CardHolder cardsHolder = cards[indexCards].GetComponent<CardHolder>();
 
-                if (cardsCode.MatchCode == -1)
+                if (cardsHolder.MatchCode == -1)
                 {
-                    cardsCode.MatchCode = _matchCode;
-                    cardsCode.CardFront = cardsFront[indexF];
+                    cardsHolder.SpriteCard.raycastTarget = true;
+                    cardsHolder.MatchCode = _matchCode;
+                    cardsHolder.CardFront = cardsFront[indexCardsFront];
 
-                    cards.RemoveAt(indexC);
+                    cards.RemoveAt(indexCards);
                 }
             }
 
-            cardsFront.RemoveAt(indexF);
+            cardsFront.RemoveAt(indexCardsFront);
             ++_matchCode;
         }
     }
@@ -93,6 +82,9 @@ public class GameManager : MonoBehaviour
         {
             SceneManager.LoadScene(1);
             CurrentScene = 1;
+
+            MatchCount = 0;
+            Tries = 5;
 
             yield return new WaitForSeconds(0.1f);
         }
@@ -152,6 +144,7 @@ public class GameManager : MonoBehaviour
         if (_firstCard.MatchCode == _secondCard.MatchCode)
         {
             _cardsSprite = _firstCard.CardFront;
+            ++MatchCount;
         }
         else
         {
