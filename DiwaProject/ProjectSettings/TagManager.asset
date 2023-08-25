@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Girl
   - Card
+  - Event System
   layers:
   - Default
   - TransparentFX

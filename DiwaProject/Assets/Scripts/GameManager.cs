@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i != Cards.Count / 2; ++i)
         {
             int indexCardsFront = Random.Range(0, cardsFront.Count - 1); //Picture
-            
+
             for (int j = 0; j != 2; ++j)
             {
                 int indexCards = Random.Range(0, cards.Count - 1); //Card itself
@@ -93,14 +93,28 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene(0);
             CurrentScene = 0;
 
-            Cards.RemoveRange(0,10);
+            Cards.RemoveRange(0, 10);
 
             yield return new WaitForSeconds(0.1f);
         }
 
         if (SceneManager.GetActiveScene().buildIndex == 1)
             CardsManagment();
-        
+        else
+            ManageGallery();
+
+    }
+
+    public List<int> IndexOpenedImages;
+    private void ManageGallery()
+    {
+        GameObject eventSys = GameObject.FindGameObjectWithTag("Event System");
+
+        if (IndexOpenedImages.Count != 0)
+            for (int i = 0; i != IndexOpenedImages.Count - 1; ++i)
+                eventSys.GetComponent<GalleryManagment>().LoadGallery(IndexOpenedImages[i]);
+        eventSys.GetComponent<GalleryManagment>().UpdateGallery();
+        RemoveGainImages();
     }
 
     private void CardsManagment()
@@ -109,7 +123,7 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i != cardsCanvas.transform.childCount; ++i)
             cardsCanvas.transform.GetChild(i).GetComponent<CardHolder>().CardsStart();
-        
+
     }
 
     public void Gallery()
@@ -121,8 +135,7 @@ public class GameManager : MonoBehaviour
 
     CardHolder _firstCard;
     CardHolder _secondCard;
-    Sprite _cardsSprite;
-
+    public List<Sprite> CardsSprite;
     public bool CanReveal
     {
         get { return _secondCard == null; }
@@ -143,7 +156,7 @@ public class GameManager : MonoBehaviour
     {
         if (_firstCard.MatchCode == _secondCard.MatchCode)
         {
-            _cardsSprite = _firstCard.CardFront;
+            CardsSprite.Add(_firstCard.CardFront);
             ++MatchCount;
         }
         else
@@ -158,5 +171,11 @@ public class GameManager : MonoBehaviour
 
         _firstCard = null;
         _secondCard = null;
+    }
+
+    public void RemoveGainImages()
+    {
+        CardsSprite.RemoveRange(0, CardsSprite.Count);
+        CardsSprite = new ();
     }
 }

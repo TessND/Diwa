@@ -35,12 +35,13 @@ public class GameScene : MonoBehaviour
 
     private void ActivateEndWindow()
     {
-        DeactivateCards();
-
         _endWindow.SetActive(true);
 
-        if (GameManager.Instance.Tries == 0)
+        if (GameManager.Instance.Tries <= 0)
+        {
+            DeactivateCards();
             _loseWindow.SetActive(true);
+        }
         else if (GameManager.Instance.MatchCount == 5)
             _winWindow.SetActive(true);
     }
@@ -61,6 +62,11 @@ public class GameScene : MonoBehaviour
     public void RepeatGame()
     {
         GameManager game = GameManager.Instance;
+
+        if (GameManager.Instance.Tries <= 0)
+            GameManager.Instance.CardsSprite.RemoveRange(0, GameManager.Instance.CardsSprite.Count);
+
+        DeactivateCards();
 
         game.MatchCount = 0;
         game.Tries = 5;
