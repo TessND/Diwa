@@ -10,6 +10,21 @@ public class GalleryManagment : MonoBehaviour
     [SerializeField] List<Sprite> Girls;
     [SerializeField] List<GameObject> Images;
 
+    private void Start()
+    {
+        SetTargetGraphic();
+    }
+
+    private void SetTargetGraphic()
+    {
+        foreach (var image in Images)
+        {
+            image.GetComponent<Button>().targetGraphic = image.GetComponent<Image>();
+            image.GetComponent<Image>().raycastTarget = false;
+        }
+
+    }
+
     public void UpdateGallery()
     {
         Girls = GameManager.Instance.CardsSprite;
@@ -21,11 +36,10 @@ public class GalleryManagment : MonoBehaviour
             if (Images[index].GetComponent<Image>().sprite.name == "Background")
             {
                 Image settingsImage = Images[index].GetComponent<Image>();
-                GameObject girlImage = Images[index].transform.GetChild(0).gameObject;
 
-                girlImage.SetActive(true);
                 settingsImage.sprite = Girls[i];
                 settingsImage.color = new Color(255f, 255f, 255f, 255f);
+                settingsImage.raycastTarget = true;
 
                 GameManager.Instance.IndexOpenedImages.Add(index);
             }
@@ -37,6 +51,6 @@ public class GalleryManagment : MonoBehaviour
         Image settingsImage = Images[indexImage].GetComponent<Image>();
         settingsImage.sprite = settingsImage.transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().sprite;
         settingsImage.color = new Color(255f, 255f, 255f, 255f);
-
+        settingsImage.raycastTarget = true;
     }
 }

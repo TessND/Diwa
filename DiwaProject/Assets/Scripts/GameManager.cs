@@ -51,11 +51,11 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i != Cards.Count / 2; ++i)
         {
-            int indexCardsFront = Random.Range(0, cardsFront.Count - 1); //Picture
+            int indexCardsFront = Random.Range(0, cardsFront.Count); //Picture
 
             for (int j = 0; j != 2; ++j)
             {
-                int indexCards = Random.Range(0, cards.Count - 1); //Card itself
+                int indexCards = Random.Range(0, cards.Count); //Card itself
 
                 CardHolder cardsHolder = cards[indexCards].GetComponent<CardHolder>();
 
