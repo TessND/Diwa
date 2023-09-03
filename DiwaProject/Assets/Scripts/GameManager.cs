@@ -94,8 +94,10 @@ public class GameManager : MonoBehaviour
         {
             SceneManager.LoadScene(0);
             CurrentScene = 0;
+            RemoveTemporalSprites();
 
             Cards.RemoveRange(0, 10);
+            Cards = new ();
 
             yield return new WaitForSeconds(0.1f);
         }
@@ -113,7 +115,7 @@ public class GameManager : MonoBehaviour
         GameObject eventSys = GameObject.FindGameObjectWithTag("Event System");
 
         if (IndexOpenedImages.Count != 0)
-            for (int i = 0; i != IndexOpenedImages.Count - 1; ++i)
+            for (int i = 0; i != IndexOpenedImages.Count; ++i)
                 eventSys.GetComponent<GalleryManagment>().LoadGallery(IndexOpenedImages[i]);
         eventSys.GetComponent<GalleryManagment>().UpdateGallery();
         RemoveGainImages();
@@ -132,10 +134,11 @@ public class GameManager : MonoBehaviour
 
     //----------------------------------------------------
 
-    private List<Sprite> _temporalCardsSprite;
     CardHolder _firstCard;
     CardHolder _secondCard;
     public List<Sprite> CardsSprite;
+    public List<Sprite> _temporalCardsSprite;
+
     public bool CanReveal
     {
         get { return _secondCard == null; }
@@ -158,20 +161,17 @@ public class GameManager : MonoBehaviour
         {
             _temporalCardsSprite.Add(_firstCard.CardFront);
             ++MatchCount;
-            if (MatchCount == 5)
-            {
-                CardsSprite.AddRange(_temporalCardsSprite);
-
-                _temporalCardsSprite.RemoveRange(0, _temporalCardsSprite.Count);
-                _temporalCardsSprite = new();
-                
-            }
+            
+            CheckMatchCount();
         }
         else
         {
             yield return new WaitForSeconds(0.5f);
 
             --Tries;
+            if (Tries == 0)
+                RemoveTemporalSprites();
+
             _firstCard.Unreveal();
             _secondCard.Unreveal();
 
@@ -185,5 +185,20 @@ public class GameManager : MonoBehaviour
     {
         CardsSprite.RemoveRange(0, CardsSprite.Count);
         CardsSprite = new ();
+    }
+
+    private void CheckMatchCount()
+    {
+        if (MatchCount == 5)
+            {
+                CardsSprite.AddRange(_temporalCardsSprite);
+                RemoveTemporalSprites();
+            }
+    }
+
+    private void RemoveTemporalSprites()
+    {
+        _temporalCardsSprite.RemoveRange(0, _temporalCardsSprite.Count);
+        _temporalCardsSprite = new ();
     }
 }
