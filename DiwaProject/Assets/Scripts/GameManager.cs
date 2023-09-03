@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour
 
     public void ShuffleCards()
     {
+        MatchCount = 0;
         foreach (var card in Cards)
             card.GetComponent<CardHolder>().CardBack = _cardBack;
 
@@ -48,6 +49,7 @@ public class GameManager : MonoBehaviour
 
         cards.AddRange(Cards);
         cardsFront.AddRange(_cardFront);
+        cardsFront.RemoveAt(14);
 
         for (int i = 0; i != Cards.Count / 2; ++i)
         {
@@ -126,13 +128,11 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void Gallery()
-    {
 
-    }
 
     //----------------------------------------------------
 
+    private List<Sprite> _temporalCardsSprite;
     CardHolder _firstCard;
     CardHolder _secondCard;
     public List<Sprite> CardsSprite;
@@ -156,8 +156,16 @@ public class GameManager : MonoBehaviour
     {
         if (_firstCard.MatchCode == _secondCard.MatchCode)
         {
-            CardsSprite.Add(_firstCard.CardFront);
+            _temporalCardsSprite.Add(_firstCard.CardFront);
             ++MatchCount;
+            if (MatchCount == 5)
+            {
+                CardsSprite.AddRange(_temporalCardsSprite);
+
+                _temporalCardsSprite.RemoveRange(0, _temporalCardsSprite.Count);
+                _temporalCardsSprite = new();
+                
+            }
         }
         else
         {

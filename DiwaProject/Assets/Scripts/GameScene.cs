@@ -29,7 +29,7 @@ public class GameScene : MonoBehaviour
             ActivateEndWindow();
         else if (GameManager.Instance.Tries <= 0)
             ActivateEndWindow();
-
+        
 
     }
 
@@ -39,7 +39,7 @@ public class GameScene : MonoBehaviour
 
         if (GameManager.Instance.Tries <= 0)
         {
-            DeactivateCards();
+            FreezeCards();
             _loseWindow.SetActive(true);
         }
         else if (GameManager.Instance.MatchCount == 5)
@@ -78,5 +78,31 @@ public class GameScene : MonoBehaviour
         _winWindow.SetActive(false);
 
 
+    }
+    public void DisableEndWindow()
+    {
+        _endWindow.SetActive(false);
+        _loseWindow.SetActive(false);
+        UnFreezeCards();
+    }
+
+    private void FreezeCards()
+    {
+        foreach (var cards in GameManager.Instance.Cards)
+        {
+            CardHolder holder = cards.GetComponent<CardHolder>();
+
+            holder.SpriteCard.raycastTarget = false;
+        }
+    }
+
+    private void UnFreezeCards()
+    {
+        foreach (var cards in GameManager.Instance.Cards)
+        {
+            CardHolder holder = cards.GetComponent<CardHolder>();
+
+            holder.SpriteCard.raycastTarget = true;
+        }
     }
 }

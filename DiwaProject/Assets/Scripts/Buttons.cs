@@ -85,4 +85,9 @@ public class Buttons : MonoBehaviour
             _isClickedImage = true;
         }
     }
+
+    public void ContinueGame()
+    {
+        GameManager.Instance.Tries = 2;
+    }
 }
